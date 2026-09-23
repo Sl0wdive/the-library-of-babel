@@ -5,11 +5,41 @@ import {
   type BookCoordinates,
 } from './config.js';
 
+export function isCoordinateName(
+  value: string | undefined,
+): value is keyof BookCoordinates {
+  return (
+    value === 'sector' ||
+    value === 'wall' ||
+    value === 'shelf' ||
+    value === 'book'
+  );
+}
+
+export function getCoordinateMax(
+  name: keyof BookCoordinates,
+): number | undefined {
+  switch (name) {
+    case 'sector':
+      return undefined;
+
+    case 'wall':
+      return WALLS_PER_HEXAGON;
+
+    case 'shelf':
+      return SHELVES_PER_WALL;
+
+    case 'book':
+      return BOOKS_PER_SHELF;
+  }
+}
+
 export function validateCoordinate(
-  name: string,
+  name: keyof BookCoordinates,
   value: number,
-  max?: number,
 ): void {
+
+  const max = getCoordinateMax(name);
   if (!Number.isSafeInteger(value) || value < 0) {
     throw new Error(`Invalid coordinate "${name}": ${value}`);
   }
@@ -21,9 +51,9 @@ export function validateCoordinate(
 
 export function serializeCoordinates(coordinates: BookCoordinates): string {
   validateCoordinate('sector', coordinates.sector);
-  validateCoordinate('wall', coordinates.wall, WALLS_PER_HEXAGON);
-  validateCoordinate('shelf', coordinates.shelf, SHELVES_PER_WALL);
-  validateCoordinate('book', coordinates.book, BOOKS_PER_SHELF);
+  validateCoordinate('wall', coordinates.wall);
+  validateCoordinate('shelf', coordinates.shelf);
+  validateCoordinate('book', coordinates.book);
 
   return [
     coordinates.sector,
@@ -50,9 +80,9 @@ export function parseCoordinates(value: string): BookCoordinates {
   };
 
   validateCoordinate('sector', coordinates.sector);
-  validateCoordinate('wall', coordinates.wall, WALLS_PER_HEXAGON);
-  validateCoordinate('shelf', coordinates.shelf, SHELVES_PER_WALL);
-  validateCoordinate('book', coordinates.book, BOOKS_PER_SHELF);
+  validateCoordinate('wall', coordinates.wall);
+  validateCoordinate('shelf', coordinates.shelf);
+  validateCoordinate('book', coordinates.book);
 
   return coordinates;
 }
