@@ -13,7 +13,7 @@ export class BooksController {
     @Param('wall', CoordinatePipe) wall: number,
     @Param('shelf', CoordinatePipe) shelf: number,
     @Param('book', CoordinatePipe) book: number,
-    @Param('page', CoordinatePipe) page: number,
+    @Param('page', ParseIntPipe) page: number,
   ) {
     const coordinates: BookCoordinates = { sector, wall, shelf, book };
     return this.bookService.getPage(coordinates, page);

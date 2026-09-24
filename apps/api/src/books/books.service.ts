@@ -1,10 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { generatePage } from '../generator/book-generator.js';
 import { BookCoordinates, PAGES_PER_BOOK } from '../generator/config.js';
-import {
-  serializeCoordinates,
-  validateCoordinate,
-} from '../generator/coordinates.js';
 
 @Injectable()
 export class BooksService {
