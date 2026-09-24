@@ -2,13 +2,16 @@ import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { BooksService } from './books.service.js';
 import type { BookCoordinates } from '../generator/config.ts';
 import { CoordinatePipe } from './validation/coordinate/coordinate.pipe.js';
-import { get } from 'http';
 
 @Controller('books')
 export class BooksController {
   constructor(private bookService: BooksService) {}
 
-  @Get(':sector/:wall/:shelf/:book/pages/:page') async getPage(
+  @Get('random') getRandomBook() {
+    return this.bookService.getRandomBook();
+  }
+
+  @Get(':sector/:wall/:shelf/:book/pages/:page') getPage(
     @Param('sector', CoordinatePipe) sector: number,
     @Param('wall', CoordinatePipe) wall: number,
     @Param('shelf', CoordinatePipe) shelf: number,
@@ -19,7 +22,7 @@ export class BooksController {
     return this.bookService.getPage(coordinates, page);
   }
 
-  @Get(':sector/:wall/:shelf/:book') async getBook(
+  @Get(':sector/:wall/:shelf/:book') getBook(
     @Param('sector', CoordinatePipe) sector: number,
     @Param('wall', CoordinatePipe) wall: number,
     @Param('shelf', CoordinatePipe) shelf: number,
