@@ -17,12 +17,16 @@ export class BooksService {
         `Page must be between 1 and ${PAGES_PER_BOOK}`,
       );
     }
-    return generatePage(coordinates, page);
+    return {
+      coordinates,
+      page,
+      content: generatePage(coordinates, page),
+    };
   }
 
   getBook(coordinates: BookCoordinates) {
     const bookInfo = {
-      coordinates: coordinates,
+      coordinates,
       pages: PAGES_PER_BOOK,
     };
     return bookInfo;
