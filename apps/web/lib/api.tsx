@@ -28,3 +28,13 @@ export async function getBookPage(
 
   return response.json();
 }
+
+export async function getRandomBookPage(): Promise<BookPageResponse> {
+  const response = await fetch(`${API_URL}/books/random`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch random book page`);
+  }
+
+  return response.json();
+}

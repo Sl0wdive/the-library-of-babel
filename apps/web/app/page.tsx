@@ -3,7 +3,11 @@
 import { SyntheticEvent, useState } from "react";
 
 import { CoordinateForm } from "../components/coordinate-form";
-import { getBookPage, type BookPageResponse } from "../lib/api";
+import {
+  getBookPage,
+  getRandomBookPage,
+  type BookPageResponse,
+} from "../lib/api";
 import { BookPage } from "../components/book-page";
 
 export default function Home() {
@@ -42,6 +46,25 @@ export default function Home() {
     }
   }
 
+  async function loadRandomPage() {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await getRandomBookPage();
+
+      setBookPage(result);
+      setCoordinates({
+        ...result.coordinates,
+        page: result.page,
+      });
+    } catch {
+      setError("Failed to load the page.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function changePage(offset: number) {
     if (!bookPage) return;
     setLoading(true);
@@ -58,6 +81,10 @@ export default function Home() {
       );
 
       setBookPage(result);
+      setCoordinates({
+        ...result.coordinates,
+        page: result.page,
+      });
     } catch {
       setError("Failed to load the page.");
     } finally {
@@ -67,8 +94,12 @@ export default function Home() {
 
   return (
     <main>
-      <h1 className="py-3 first-letter:text-3xl first-letter:font-serif">Library of Babel</h1>
-      <p className="py-3 first-letter:text-3xl first-letter:font-serif">Explore deterministic books generated from their coordinates.</p>
+      <h1 className="py-3 first-letter:text-3xl first-letter:font-serif">
+        Library of Babel
+      </h1>
+      <p className="py-3 first-letter:text-3xl first-letter:font-serif">
+        Explore deterministic books generated from their coordinates.
+      </p>
 
       <CoordinateForm
         coordinates={coordinates}
@@ -76,6 +107,10 @@ export default function Home() {
         onChange={setCoordinates}
         onSubmit={handleSubmit}
       />
+
+      <button onClick={loadRandomPage} disabled={loading}>
+        Random page
+      </button>
 
       {error && <p>{error}</p>}
 

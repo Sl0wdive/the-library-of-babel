@@ -16,11 +16,11 @@ export function BookPage({ bookPage, onNextPage, onPrevPage }: BookPageProps) {
 
   return (
     <section className="container mx-auto px-4">
-      <h2>
-        {coordinates.sector}/{coordinates.wall}/{coordinates.shelf}
+      {/* <h2>
+        {coordinates.sector}/{coordinates.wall}/{coordinates.shelf}/
         {coordinates.book}
       </h2>
-      <h3>Page {page}</h3>
+      <h3>Page {page}</h3> */}
       <p
         className={`${imFellEnglish.className} container mx-auto px-4 py-10 whitespace-pre-wrap break-all`}
       >
