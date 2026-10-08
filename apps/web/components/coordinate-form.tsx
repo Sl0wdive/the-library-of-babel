@@ -1,11 +1,11 @@
 import type { SubmitEvent } from 'react';
 
 interface Coordinates {
-  sector: number;
-  wall: number;
-  shelf: number;
-  book: number;
-  page: number;
+  sector: string;
+  wall: string;
+  shelf: string;
+  book: string;
+  page: string;
 }
 
 interface CoordinateFormProps {
@@ -32,7 +32,7 @@ export function CoordinateForm({
           onChange={(event) =>
             onChange({
               ...coordinates,
-              sector: Number(event.target.value),
+              sector: event.target.value,
             })
           }
         />
@@ -48,7 +48,7 @@ export function CoordinateForm({
           onChange={(event) =>
             onChange({
               ...coordinates,
-              wall: Number(event.target.value),
+              wall: event.target.value,
             })
           }
         />
@@ -64,7 +64,7 @@ export function CoordinateForm({
           onChange={(event) =>
             onChange({
               ...coordinates,
-              shelf: Number(event.target.value),
+              shelf: event.target.value,
             })
           }
         />
@@ -80,7 +80,7 @@ export function CoordinateForm({
           onChange={(event) =>
             onChange({
               ...coordinates,
-              book: Number(event.target.value),
+              book: event.target.value,
             })
           }
         />
@@ -96,7 +96,7 @@ export function CoordinateForm({
           onChange={(event) =>
             onChange({
               ...coordinates,
-              page: Number(event.target.value),
+              page: event.target.value,
             })
           }
         />

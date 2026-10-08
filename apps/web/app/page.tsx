@@ -12,11 +12,11 @@ import { BookPage } from "../components/book-page";
 
 export default function Home() {
   const [coordinates, setCoordinates] = useState({
-    sector: 0,
-    wall: 0,
-    shelf: 0,
-    book: 0,
-    page: 1,
+    sector: "0",
+    wall: "0",
+    shelf: "0",
+    book: "0",
+    page: "1",
   });
 
   const [bookPage, setBookPage] = useState<BookPageResponse | null>(null);
@@ -26,19 +26,71 @@ export default function Home() {
   async function handleSubmit(event: SyntheticEvent) {
     event.preventDefault();
 
-    setLoading(true);
     setError(null);
 
+    const values = Object.values(coordinates);
+
+    if (values.some((value) => value === "")) {
+      setError("All fields are required.");
+      return;
+    }
+
+    const sector = Number(coordinates.sector);
+    const wall = Number(coordinates.wall);
+    const shelf = Number(coordinates.shelf);
+    const book = Number(coordinates.book);
+    const page = Number(coordinates.page);
+
+    if (
+      Number.isNaN(sector) ||
+      Number.isNaN(wall) ||
+      Number.isNaN(shelf) ||
+      Number.isNaN(book) ||
+      Number.isNaN(page)
+    ) {
+      setError("All fields must contain valid numbers.");
+      return;
+    }
+
+    if (sector < 0) {
+      setError("Sector must be 0 or greater.");
+      return;
+    }
+
+    if (wall < 0 || wall > 3) {
+      setError("Wall must be between 0 and 3.");
+      return;
+    }
+
+    if (shelf < 0 || shelf > 4) {
+      setError("Shelf must be between 0 and 4.");
+      return;
+    }
+
+    if (book < 0 || book > 31) {
+      setError("Book must be between 0 and 31.");
+      return;
+    }
+
+    if (page < 1 || page > 410) {
+      setError("Page must be between 1 and 410.");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      const result = await getBookPage(
-        coordinates.sector,
-        coordinates.wall,
-        coordinates.shelf,
-        coordinates.book,
-        coordinates.page,
-      );
+      const result = await getBookPage(sector, wall, shelf, book, page);
 
       setBookPage(result);
+
+      setCoordinates({
+        sector: String(result.coordinates.sector),
+        wall: String(result.coordinates.wall),
+        shelf: String(result.coordinates.shelf),
+        book: String(result.coordinates.book),
+        page: String(result.page),
+      });
     } catch {
       setError("Failed to load the page.");
     } finally {
@@ -54,10 +106,7 @@ export default function Home() {
       const result = await getRandomBookPage();
 
       setBookPage(result);
-      setCoordinates({
-        ...result.coordinates,
-        page: result.page,
-      });
+      syncCoordinates(result);
     } catch {
       setError("Failed to load the page.");
     } finally {
@@ -81,15 +130,22 @@ export default function Home() {
       );
 
       setBookPage(result);
-      setCoordinates({
-        ...result.coordinates,
-        page: result.page,
-      });
+      syncCoordinates(result);
     } catch {
       setError("Failed to load the page.");
     } finally {
       setLoading(false);
     }
+  }
+
+  function syncCoordinates(result: BookPageResponse) {
+    setCoordinates({
+      sector: String(result.coordinates.sector),
+      wall: String(result.coordinates.wall),
+      shelf: String(result.coordinates.shelf),
+      book: String(result.coordinates.book),
+      page: String(result.page),
+    });
   }
 
   return (
