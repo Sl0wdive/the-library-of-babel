@@ -1,0 +1,1 @@
+export type LoadingAction = "submit" | "random" | "page" | null;

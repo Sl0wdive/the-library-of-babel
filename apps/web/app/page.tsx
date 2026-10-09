@@ -1,6 +1,7 @@
 "use client";
 
-import { SyntheticEvent, useState } from "react";
+import { useState } from "react";
+import type { SyntheticEvent } from "react";
 
 import { CoordinateForm } from "../components/coordinate-form";
 import {
@@ -9,6 +10,7 @@ import {
   type BookPageResponse,
 } from "../lib/api";
 import { BookPage } from "../components/book-page";
+import type { LoadingAction } from "@/lib/types";
 
 export default function Home() {
   const [coordinates, setCoordinates] = useState({
@@ -23,7 +25,9 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(event: SyntheticEvent) {
+  const [loadingAction, setLoadingAction] = useState<LoadingAction>(null);
+
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setError(null);
@@ -78,6 +82,7 @@ export default function Home() {
     }
 
     setLoading(true);
+    setLoadingAction("submit");
 
     try {
       const result = await getBookPage(sector, wall, shelf, book, page);
@@ -95,11 +100,13 @@ export default function Home() {
       setError("Failed to load the page.");
     } finally {
       setLoading(false);
+      setLoadingAction(null);
     }
   }
 
   async function loadRandomPage() {
     setLoading(true);
+    setLoadingAction("random");
     setError(null);
 
     try {
@@ -111,12 +118,14 @@ export default function Home() {
       setError("Failed to load the page.");
     } finally {
       setLoading(false);
+      setLoadingAction(null);
     }
   }
 
   async function changePage(offset: number) {
     if (!bookPage) return;
     setLoading(true);
+    setLoadingAction("page");
     setError(null);
 
     const { page, coordinates } = bookPage;
@@ -135,6 +144,7 @@ export default function Home() {
       setError("Failed to load the page.");
     } finally {
       setLoading(false);
+      setLoadingAction(null);
     }
   }
 
@@ -157,16 +167,23 @@ export default function Home() {
         Explore deterministic books generated from their coordinates.
       </p>
 
-      <CoordinateForm
-        coordinates={coordinates}
-        loading={loading}
-        onChange={setCoordinates}
-        onSubmit={handleSubmit}
-      />
+      <div className="flex flex-wrap items-end gap-3">
+        <CoordinateForm
+          coordinates={coordinates}
+          loading={loading}
+          loadingAction={loadingAction}
+          onChange={setCoordinates}
+          onSubmit={handleSubmit}
+        />
 
-      <button onClick={loadRandomPage} disabled={loading}>
-        Random page
-      </button>
+        <button
+          className="rounded-md border bg-black px-4 py-1.5 text-white hover:bg-gray-800 disabled:cursor-not-allowed"
+          onClick={loadRandomPage}
+          disabled={loading}
+        >
+          {loadingAction === "random" ? "Loading..." : "Random Page"}
+        </button>
+      </div>
 
       {error && <p>{error}</p>}
 
